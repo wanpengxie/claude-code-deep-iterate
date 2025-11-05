@@ -190,7 +190,10 @@ MIT
 ---
 
 > **Author**: wanpeng.xie@gmail.com
+> 
 > Created using `/deep-iterate`
+> 
 > _理解问题 → 真实探索 → 深入本质 → 诚实总结_
+> 
 > _Real thinking, not performative iteration._
 
