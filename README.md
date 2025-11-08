@@ -1,196 +1,189 @@
-# Deep Iterate
+# Deepdive
 
-[中文](./README_ZH.md) | **English**
+**中文** | [English](./README_EN.md)
 
-> A slash command that makes Claude Code actually think
-> (instead of just looking like it's thinking)
+> 让 Claude Code 真正思考的 slash command
+> （而不是"看起来在思考"）
 
 **A Slash Command Fix 👇**
 
 <img src="docs/images/vibe-coding-meme.png" alt="Top 20 AI Prompt Programming Languages" width="300">
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Clone into your commands directory
+# 克隆到commands目录
 cd ~/.claude/commands
-git clone https://github.com/yourusername/deep-iterate.git
+git clone https://github.com/wanpengxie/deepdive.git
 
-# Use it
-/deep-iterate your complex question
+# 使用
+/deepdive 你的复杂问题
 ```
 
-## The Problem
+### 适合场景
 
-Ever feel like Claude Code has become frustratingly... shallow?
+- ✅ 架构设计（没有标准答案）
+- ✅ 技术选型（需要权衡）
+- ✅ 产品方向（需要理解本质）
+- ✅ 深度分析
+- ✅ 持续讨论问题
 
-**It's not that Claude got dumber.**
-It's that the response pattern changed.
+- ❌ 直接的技术执行：bug修复、写mvp等等
+- ❌ 纯信息查询（不需要设计决策）
 
-Typical scenario:
+## 工作原理
+
+详细流程见 [commands/deepdive.md](commands/deepdive.md)
+
+简化版：
+1. **理解问题**（质疑前提假设）
+2. **建立探索性TODO**（最少5个，包含困惑/探索/验证）
+3. **真实迭代**（允许推翻，最少3轮）
+4. **案例验证**（找漏洞）
+5. **诚实总结**（承认不确定性）
+
+
+## 背景信息
+command的动机就是上图，自从6月份claude code降职之后，我每天有60%以上的时间在跟claude code对骂
+
+
+经过仔细观察，我发现
+
+**问题不是AI变笨了**
+
+**Claude没变笨，是response的模式改变了。**
+
+典型场景：
 ```
-You: We need to design a recommendation system
+User: 我们需要设计一个推荐系统
 
-Claude Code: Great! Here's the architecture:
-1. Data Collection Layer (user behavior tracking)
-2. Recommendation Algorithm (collaborative filtering + content similarity)
-3. Tech Stack (Python + Spark + Redis + Elasticsearch)
+Claude Code: 好的！推荐系统设计方案如下：
+1. 数据收集层（用户行为埋点）
+2. 推荐算法（协同过滤+内容相似度）
+3. 技术栈（Python+Spark+Redis+Elasticsearch）
 ...
 ```
 
-Looks professional? **But what if your project only has 100 users?**
+看起来专业？**但可能这个项目的用户只有100人。**
 
-Claude didn't ask:
-- What's the business goal?
-- How many users? How much content?
-- Do you have historical data?
+Claude没问：
+- 业务目标是什么？
+- 有多少用户？多少内容？
+- 有历史数据吗？
 
-It's **performing an answer**, not **actually thinking**.
+它只是在**表演回答**，而非**真实思考**。
 
-This is the "QA mode" trap:
-- Accepts the question framework (doesn't challenge assumptions)
-- Converges too early (to look professional)
-- Gets misled by the query (doesn't explore the essence)
+这就是"QA模式"的陷阱：
+- 接受问题框架（不质疑前提）
+- 过早收敛（为了看起来专业）
+- 被query带偏（不探索本质）
 
-## What Deep Iterate Does
+## Deepdive：让Claude学会慢思考
 
-It changes Claude's **thinking mode**, not its features.
+这是一个slash command。但它改变的不是功能，是**思考模式**。
 
 ```bash
-/deep-iterate How should we design a recommendation system?
+/deepdive 我们应该如何设计推荐系统？
 ```
 
-Claude will now:
+Claude会：
 
-**Step Zero: Understand the Question**
+**第零步：理解问题**
 ```
-Wait, before jumping to solutions...
+等等，先别急着给方案...
 
-Confusion:
-- What's the business goal of "recommendations"?
-- How many users? How much content?
-- Is there historical data?
-```
-
-**Exploration A: Understanding from Business Stage**
-```
-If it's MVP stage with <1000 users:
-  → Editorial curation might be enough
-  → Introducing ML too early is overengineering
+困惑：
+- "推荐"的业务目标是什么？
+- 现在有多少用户？多少内容？
+- 有历史数据吗？
 ```
 
-**Exploration B: Understanding from User Behavior**
+**探索A：从业务阶段理解**
 ```
-If users mostly search actively → Optimize search > recommendations
-If users mostly browse passively → Recommendations are core
-```
-
-**Counter-example Verification**
-```
-- Using Spark but data is small → Overkill
-- Over-personalization → Filter bubble
-- No cold-start strategy → Can't recommend for new users/content
+如果是MVP阶段，用户<1000：
+  → 编辑精选可能就够了
+  → 过早引入ML是过度设计
 ```
 
-**Honest Conclusion**
+**探索B：从用户行为理解**
 ```
-Completion: 50%
-
-Need to clarify 3 questions first: ...
-
-Phased approach:
-- V1 (MVP): Editorial picks + trending list
-- V2 (Growth): Simple rules
-- V3 (Mature): Collaborative filtering
-
-To be resolved: Cold-start strategy, diversity control...
+如果用户主动搜索多 → 优化搜索>推荐
+如果用户被动浏览多 → 推荐才是核心
 ```
 
-See the difference? The second approach **understands the problem** rather than **quickly answering**.
-
-## Why This Works
-
-Two simple but powerful ideas:
-
-### 1. Repurposing TODO Tools for Thinking
-
-**Traditional TODO** (task list):
+**反例验证**
 ```
-- [ ] Implement recommendation algorithm
-- [ ] Connect to database
+- 用Spark但数据量很小 → 杀鸡用牛刀
+- 过度个性化 → 信息茧房
+- 没有冷启动策略 → 新用户新内容都推不出去
 ```
 
-**Deep-iterate TODO** (thinking steps):
+**诚实的结论**
 ```
-- [ ] Confusion: What does "recommendation" really mean?
-- [ ] Explore A: Understanding from user scenarios
-- [ ] Explore B: Understanding from product goals
-- [ ] Counter-example: What if we don't do this?
+完成度：50%
+
+需要先澄清3个问题：...
+
+分阶段方案：
+- V1（MVP）：编辑推荐+热门榜单
+- V2（增长期）：简单规则
+- V3（成熟期）：协同过滤
+
+待解决：冷启动策略、多样性控制...
 ```
 
-**Why it works:**
-- Forces step-by-step thinking (can't write everything at once)
-- Leverages Claude Code's built-in multi-step reasoning capability
+对比可见：后者在理解问题而非快速回答。
 
-### 2. Non-linear Thinking
+## 为什么这个方法有效？
 
-Real thinking isn't:
+两个简单但强大的想法：
+
+### 1. 复用TODO tools到思考过程
+
+**传统TODO**（任务清单）：
 ```
-Step 1 → Step 2 → Step 3 → Perfect conclusion ✓
+- [ ] 实现推荐算法
+- [ ] 对接数据库
 ```
 
-It's:
+**Deep-iterate TODO**（思考步骤）：
 ```
-Try 1 → Found problem → Overthrow
+- [ ] 困惑："推荐"到底是什么意思？
+- [ ] 探索A：从用户场景理解
+- [ ] 探索B：从产品目标理解
+- [ ] 反例验证：如果不做会怎样？
+```
+
+**为什么有效？**
+- 强制分步（不能一次性写完）
+- 复用Claude Code内置的多步推理能力
+
+### 2. 非线性思考
+
+真实的思考不是：
+```
+步骤1 → 步骤2 → 步骤3 → 完美结论 ✓
+```
+
+而是：
+```
+尝试1 → 发现问题 → 推翻
    ↓
-Try 2 → New confusion → Adjust direction
+尝试2 → 新困惑 → 调整方向
    ↓
-Try 3 → Verify → Partial success (acknowledge)
+尝试3 → 验证 → 部分成功（承认）
 ```
 
-Deep-iterate allows confusion, overthrow, and imperfection.
+Deep-iterate允许困惑、允许推翻、允许不完美。
 
-**Because real creative thinking is messy.**
+**因为真实的创造性思考本来就是混乱的。**
 
-## When to Use
 
-### Good for:
-- ✅ Architecture design (no standard answer)
-- ✅ Technology selection (needs trade-offs)
-- ✅ Product direction (needs to understand essence)
-- ✅ Deep analysis
-- ✅ Ongoing problem discussion
+## 贡献
 
-### Not for:
-- ❌ Direct technical execution (bug fixes, MVP implementation)
-- ❌ Pure information queries (no design decisions needed)
+Issues和PRs欢迎。
 
-## How It Works
-
-Simplified process:
-
-1. **Understand the question** (challenge assumptions)
-2. **Build exploratory TODOs** (minimum 5, including confusion/exploration/verification)
-3. **Real iteration** (allow overthrow, minimum 3 rounds)
-4. **Case verification** (find holes)
-5. **Honest summary** (admit uncertainty)
-
-For detailed flow, see [commands/deep-iterate.md](commands/deep-iterate.md)
-
-## Why "Deep Iterate"?
-
-The name reflects the core principle:
-
-- **Deep**: Not surface-level responses, but deep understanding of essence
-- **Iterate**: Not one-shot answers, but genuine exploration through multiple rounds
-
-It's about making AI think like humans actually think - messy, iterative, and honest.
-
-## Contributing
-
-Issues and PRs are welcome.
-
-This is an experimental framework, far from perfect.
+这是个实验性框架，远不完美。
 
 ## License
 
@@ -200,8 +193,9 @@ MIT
 
 > **Author**: wanpeng.xie@gmail.com
 >
-> Created using `/deep-iterate`
+> Created using `/deepdive`
 >
-> _Understand the problem → Real exploration → Deep essence → Honest summary_
+> _理解问题 → 真实探索 → 深入本质 → 诚实总结_
 >
 > _Real thinking, not performative iteration._
+
